@@ -183,4 +183,46 @@ router.post('/logout', cors(), (req, res) => {
   }
 });
 
+
+// Middleware to verify JWT token
+const verifyToken = (req, res, next) => {
+  const token = req.headers['authorization'];
+
+  if (!token) {
+    return res.status(401).json({ status: 'error', message: 'No token provided' });
+  }
+
+  // Remove 'Bearer ' prefix from the token if present
+  const tokenWithoutBearer = token.startsWith('Bearer ') ? token.split(' ')[1] : token;
+
+  jwt.verify(tokenWithoutBearer, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ status: 'error', message: 'Invalid token' });
+    }
+    req.userId = decoded.id; // Assuming JWT payload includes user ID
+    next();
+  });
+};
+
+// @desc Fetch user profile information
+router.get('/profile', verifyToken, async (req, res) => {
+  try {
+    // Fetch the user profile based on the userId decoded from the token
+    const user = await User.findById(req.userId).select('-password'); // Exclude the password from the result
+
+    if (!user) {
+      return res.status(404).json({ status: 'error', message: 'User not found' });
+    }
+
+    // Return the user profile details
+    res.status(200).json({
+      status: 'success',
+      user
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ status: 'error', message: 'Server error' });
+  }
+});
+
 module.exports = router;
