@@ -167,4 +167,20 @@ router.post('/login', cors(), [
   }
 });
 
+
+router.post('/logout', cors(), (req, res) => {
+  try {
+    // No actual server-side logout is necessary with JWT unless blacklisting tokens.
+    // Simply inform the client to remove the token.
+    
+    res.status(200).json({
+      status: 'success',
+      message: 'User logged out successfully. Please remove the token from storage.'
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ status: 'error', message: 'Server error' });
+  }
+});
+
 module.exports = router;
