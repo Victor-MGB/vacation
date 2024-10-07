@@ -133,6 +133,8 @@ router.post('/login', cors(), [
       return res.status(400).json({ status: 'error', message: 'Invalid credentials' });
     }
 
+    
+
     // Check if the password matches
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
@@ -145,6 +147,11 @@ router.post('/login', cors(), [
       process.env.JWT_SECRET, // your secret key
       { expiresIn: '1h' } // token expiration time
     );
+
+    // Save the token in the user document
+    user.token = token; // Assign the token to the user object
+    await user.save(); // Save the user with the token
+
 
     // Send the response with user data and token
     res.json({

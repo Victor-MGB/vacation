@@ -14,6 +14,7 @@ const UserSchema = new Schema({
     vacationType: { type: String }, // e.g., 'beaches', 'mountains'
     notificationMethods: { email: Boolean, SMS: Boolean }
   },
+  token: { type: String }, // New field to store JWT token
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
