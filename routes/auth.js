@@ -4,6 +4,7 @@ const { check, validationResult } = require('express-validator');
 const User = require('../models/User');
 const multer = require('multer');
 const router = express.Router();
+const cors = require("cors")
 
 // Set up Multer for profile picture uploads (optional)
 // Set up Multer for profile picture uploads (optional)
@@ -27,7 +28,7 @@ const storage = multer.diskStorage({
 
 // @route POST /api/auth/register
 // @desc Register a new user
-router.post('/register',
+router.post('/register', cors(),
     upload.single('profilePicture'),  // Accept a file upload for profile picture
     [
       check('name', 'Name is required').not().isEmpty(),
