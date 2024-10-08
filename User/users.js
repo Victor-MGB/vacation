@@ -36,4 +36,36 @@ router.get('/profile', async (req, res) => {
   }
 });
 
+// GET /api/user/preferences: Fetch user vacation preferences
+router.get('/preferences', async (req, res) => {
+  try {
+    const user = await User.findById(req.userId); // Assuming req.userId is being set elsewhere
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found.'
+      });
+    }
+
+    const { vacationType, notificationMethods } = user.preferences; // Extract preferences
+
+    res.status(200).json({
+      success: true,
+      message: 'User preferences retrieved successfully.',
+      data: {
+        vacationType,
+        notificationMethods
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Server error. Could not retrieve user preferences.',
+      error: error.message
+    });
+  }
+});
+
+
 module.exports = router;
